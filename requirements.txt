@@ -14,7 +14,7 @@ soupsieve==2.4.1
 TgCrypto==1.2.5
 urllib3==2.0.3
 websockets==11.0.3
-yt-dlp
+yt-dlp==2023.7.6
 motor
 aiohttp==3.9.5
 aiofiles
