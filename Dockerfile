@@ -1,14 +1,31 @@
-FROM python:3.9.2-slim-buster
-WORKDIR /app
-RUN apt-get update && apt-get install -y git
-RUN apt-get update -y && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends gcc libffi-dev musl-dev ffmpeg aria2 python3-pip \
-    && apt-get clean \
+# Use the base image with Python 3.12 if available
+FROM python:3.12-slim
+
+# Set environment variables
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Install build dependencies and ffmpeg
+RUN apt-get update && apt-get install -y \
+    gcc \
+    git \
+    libc-dev \
+    libffi-dev \
+    musl-dev \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
-    
 
-COPY requirements.txt requirements.txt
+# Create a virtual environment
+RUN python3.12 -m venv $VIRTUAL_ENV
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
 COPY . .
-RUN pip3 install -r requirements.txt
-CMD python3 bot.py
 
+# Install Python dependencies listed in the Installer file
+RUN $VIRTUAL_ENV/bin/pip install --no-cache-dir --upgrade -r requirements.txt
+
+# Specify the command to run your application
+CMD ["$VIRTUAL_ENV/bin/python", "bot.py"]
