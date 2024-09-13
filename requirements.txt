@@ -21,4 +21,4 @@ aiofiles
 pytz
 umongo==3.1.0
 speedtest-cli
-https://gitea.com/powerpjvip/drm-dl
+git+https://gitea.com/powerpjvip/drm-dl
