@@ -1,30 +1,11 @@
-# Use the base image with Python 3.12 if available
-FROM python:3.12-slim
-
-# Set environment variables
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Install build dependencies and ffmpeg
-RUN apt-get update && apt-get install -y \
-    gcc \
-    libc-dev \
-    libffi-dev \
-    musl-dev \
-    ffmpeg \
+FROM python:3.9.2-slim-buster
+RUN apt-get update -y && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends gcc libffi-dev musl-dev ffmpeg aria2 python3-pip \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a virtual environment
-RUN python3.12 -m venv $VIRTUAL_ENV
+COPY . /app/
+WORKDIR /app/
+RUN pip3 install -r requirements.txt
+CMD python3 bot.py
 
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the current directory contents into the container at /app
-COPY . .
-
-# Install Python dependencies listed in the Installer file
-RUN $VIRTUAL_ENV/bin/pip install --no-cache-dir --upgrade --requirement Installer
-
-# Specify the command to run your application
-CMD ["$VIRTUAL_ENV/bin/python", "modules/main.py"]
